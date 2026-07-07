@@ -1,0 +1,38 @@
+name: profile-verify
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify profile boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f README.md
+          grep -Fq "Permaculture-DAO/prometheus-canon" README.md
+          grep -Fq "Permaculture-DAO/prometheus-canonical-releases" README.md
+          grep -Fq "Current assurance boundary" README.md
+          python - <<'PY'
+          from pathlib import Path
+          p = Path("README.md")
+          t = p.read_text(encoding="utf-8")
+          forbidden = [
+              "Prometheus is scientifically proven",
+              "Prometheus is fully verified",
+              "production ready",
+              "regulatory approved",
+          ]
+          bad = [x for x in forbidden if x.lower() in t.lower()]
+          if bad:
+              raise SystemExit(f"Forbidden claims: {bad}")
+          print("profile verification passed")
+          PY

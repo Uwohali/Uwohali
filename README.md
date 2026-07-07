@@ -1,16 +1,31 @@
-## Hi there 👋
+# Uwohali
 
-<!--
-**Uwohali/Uwohali** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+Founder and steward of **h•eart•h Prometheus**: a verification-first regenerative infrastructure architecture integrating evidence governance, distributed coordination and accountable implementation.
 
-Here are some ideas to get you started:
+## Authoritative project map
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+- **Semantic canon:** `Permaculture-DAO/prometheus-canon`
+- **Canonical releases:** `Permaculture-DAO/prometheus-canonical-releases`
+- **Holochain application:** `Permaculture-DAO/prometheus-happ`
+- **Runtime and evidence pipeline:** `Permaculture-DAO/prometheus-runtime`
+- **Founder publication mirror:** `Uwohali/hearth-prometheus-whitepaper`
+- **Historical archive:** `Uwohali/legacy-hearth-prometheus-whitepaper-pre-v1.1`
+
+## Current assurance boundary
+
+Prometheus is under controlled implementation, review and pilot preparation.
+
+This profile does **not** claim:
+
+- general scientific validation;
+- production admission;
+- legal or regulatory approval;
+- verified financial value;
+- a public offering;
+- an activated canonical release beyond the evidence explicitly published by the authoritative repositories.
+
+## Operating principle
+
+> Claim → observation → evidence → provenance → integrity → review → bounded admissibility.
+
+Public statements must remain traceable to versioned evidence, named scope and explicit limitations.
