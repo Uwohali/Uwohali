@@ -12,8 +12,11 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Verify profile boundary
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - name: Verify profile boundary and text safety
         shell: bash
         run: |
           set -euo pipefail
@@ -21,18 +24,59 @@ jobs:
           grep -Fq "Permaculture-DAO/prometheus-canon" README.md
           grep -Fq "Permaculture-DAO/prometheus-canonical-releases" README.md
           grep -Fq "Current assurance boundary" README.md
+
           python - <<'PY'
           from pathlib import Path
-          p = Path("README.md")
-          t = p.read_text(encoding="utf-8")
-          forbidden = [
-              "Prometheus is scientifically proven",
-              "Prometheus is fully verified",
+          import re
+
+          governed_extensions = {".md", ".yml", ".yaml", ".json", ".txt"}
+          files = [
+              p for p in Path(".").rglob("*")
+              if p.is_file()
+              and ".git" not in p.parts
+              and p.suffix.lower() in governed_extensions
+          ]
+
+          forbidden_claims = [
+              "prometheus is scientifically proven",
+              "scientifically proven platform",
+              "prometheus is fully verified",
+              "fully verified regenerative infrastructure",
               "production ready",
               "regulatory approved",
+              "regulator approved",
+              "institutionally admitted",
+              "investment grade",
+              "canonical release activated",
+              "independently replicated",
+              "guaranteed ecological outcome",
+              "guaranteed financial outcome",
+              "guaranteed health outcome",
           ]
-          bad = [x for x in forbidden if x.lower() in t.lower()]
-          if bad:
-              raise SystemExit(f"Forbidden claims: {bad}")
-          print("profile verification passed")
+
+          bidi = re.compile(
+              "[\u200e\u200f\u202a-\u202e\u2066-\u2069]"
+          )
+
+          violations = []
+          for path in files:
+              text = path.read_text(encoding="utf-8")
+              lowered = text.lower()
+
+              for phrase in forbidden_claims:
+                  if phrase in lowered:
+                      violations.append(
+                          f"{path}: prohibited claim: {phrase}"
+                      )
+
+              for match in bidi.finditer(text):
+                  violations.append(
+                      f"{path}: prohibited bidi control "
+                      f"U+{ord(match.group()):04X}"
+                  )
+
+          if violations:
+              raise SystemExit("\n".join(violations))
+
+          print("profile governance and text-safety verification passed")
           PY
