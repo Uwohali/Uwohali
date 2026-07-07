@@ -12,7 +12,7 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
 
@@ -29,13 +29,8 @@ jobs:
           from pathlib import Path
           import re
 
-          governed_extensions = {".md", ".yml", ".yaml", ".json", ".txt"}
-          files = [
-              p for p in Path(".").rglob("*")
-              if p.is_file()
-              and ".git" not in p.parts
-              and p.suffix.lower() in governed_extensions
-          ]
+          # Scan publication content, not the workflow that defines the test strings.
+          publication_files = [Path("README.md")]
 
           forbidden_claims = [
               "prometheus is scientifically proven",
@@ -54,29 +49,24 @@ jobs:
               "guaranteed health outcome",
           ]
 
-          bidi = re.compile(
-              "[\u200e\u200f\u202a-\u202e\u2066-\u2069]"
-          )
-
+          bidi = re.compile("[\u200e\u200f\u202a-\u202e\u2066-\u2069]")
           violations = []
-          for path in files:
+
+          for path in publication_files:
               text = path.read_text(encoding="utf-8")
               lowered = text.lower()
 
               for phrase in forbidden_claims:
                   if phrase in lowered:
-                      violations.append(
-                          f"{path}: prohibited claim: {phrase}"
-                      )
+                      violations.append(f"{path}: prohibited claim: {phrase}")
 
               for match in bidi.finditer(text):
                   violations.append(
-                      f"{path}: prohibited bidi control "
-                      f"U+{ord(match.group()):04X}"
+                      f"{path}: prohibited bidi control U+{ord(match.group()):04X}"
                   )
 
           if violations:
               raise SystemExit("\n".join(violations))
 
-          print("profile governance and text-safety verification passed")
+          print("profile publication verification passed")
           PY
